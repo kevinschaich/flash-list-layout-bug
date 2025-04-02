@@ -1,15 +1,9 @@
 import { FlashList } from '@shopify/flash-list'
-import { clsx, type ClassValue } from 'clsx'
 import * as React from 'react'
 import { Button, LayoutAnimation, Text, TextInput, View } from 'react-native'
 import { KeyboardAvoidingView, KeyboardStickyView } from 'react-native-keyboard-controller'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { twMerge } from 'tailwind-merge'
 import { MOCK_MESSAGES, MockMessage } from '~/app/data'
-
-export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs))
-}
 
 export default function Chat() {
     const insets = useSafeAreaInsets()
@@ -63,15 +57,21 @@ export default function Chat() {
                     inverted
                     ref={flashListRef}
                     keyExtractor={(item) => item.id}
-                    estimatedItemSize={70}
+                    estimatedItemSize={10}
                     data={messages}
                     renderItem={({ item, index }) => {
                         return (
                             <View
-                                className={cn(
-                                    'justify-center px-2 pb-3.5 sm:px-4',
-                                    item.sender === ME ? 'items-end pl-16' : 'items-start pr-16',
-                                )}
+                                className='h-fit w-full justify-center px-2 pb-3.5 sm:px-4'
+                                style={
+                                    item.sender === ME
+                                        ? {
+                                              alignItems: 'flex-end',
+                                          }
+                                        : {
+                                              alignItems: 'flex-start',
+                                          }
+                                }
                             >
                                 <View className='rounded-2xl bg-popover px-3 py-1.5 dark:bg-muted-foreground'>
                                     <Text>{item.text}</Text>
