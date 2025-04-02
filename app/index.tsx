@@ -1,11 +1,11 @@
 import { FlashList } from '@shopify/flash-list'
+import { clsx, type ClassValue } from 'clsx'
 import * as React from 'react'
-import { Button, LayoutAnimation, Text, TextInput, View, ViewStyle } from 'react-native'
+import { Button, LayoutAnimation, Text, TextInput, View } from 'react-native'
 import { KeyboardAvoidingView, KeyboardStickyView } from 'react-native-keyboard-controller'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { MOCK_MESSAGES, MockMessage } from '~/app/data'
-import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { MOCK_MESSAGES, MockMessage } from '~/app/data'
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -23,8 +23,10 @@ export default function Chat() {
         flashListRef.current?.prepareForLayoutAnimationRender()
 
         LayoutAnimation.configureNext({
-            ...LayoutAnimation.Presets.linear,
-            duration: 500, // Shorter duration to feel snappier
+            duration: 500,
+            create: { type: 'linear', property: 'opacity' },
+            update: { type: 'spring', springDamping: 10 },
+            delete: { type: 'linear', property: 'opacity' },
         })
     }
 
@@ -64,15 +66,10 @@ export default function Chat() {
                     estimatedItemSize={70}
                     data={messages}
                     renderItem={({ item, index }) => {
-                        const nextMessage = messages[index - 1]
-                        const isSameNextSender =
-                            typeof nextMessage !== 'string' ? nextMessage?.sender === item.sender : false
-
                         return (
                             <View
                                 className={cn(
                                     'justify-center px-2 pb-3.5 sm:px-4',
-                                    isSameNextSender ? 'pb-1' : 'pb-3.5',
                                     item.sender === ME ? 'items-end pl-16' : 'items-start pr-16',
                                 )}
                             >
